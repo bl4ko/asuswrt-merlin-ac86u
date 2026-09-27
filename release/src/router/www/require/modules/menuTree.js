@@ -157,18 +157,6 @@ define(function(){
 				] 
 			},
 			{
-				menuName: "<#AiCloud_Title#>",
-				index: "menu_AiCloud", 
-				tab: [
-					{url: "cloud_main.asp", tabName: "AiCloud 2.0"},
-					{url: "cloud_sync.asp", tabName: "<#smart_sync#>"},
-					{url: "cloud_router_sync.asp", tabName: "<#Server_Sync#>"},
-					{url: "cloud_settings.asp", tabName: "<#Settings#>"},
-					{url: "cloud_syslog.asp", tabName: "<#Log#>"},
-					{url: "NULL", tabName: "__INHERIT__"}
-				] 
-			},
-			{
 				menuName: "Tools",
 				index: "menu_Tools",
 				tab: [
@@ -353,10 +341,6 @@ define(function(){
 
 				if(!usb_support){
 					retArray.push("menu_APP");
-				}
-
-				if((!cloudsync_support && !aicloudipk_support) || nocloudsync_support){
-					retArray.push("menu_AiCloud");
 				}
 
 				if(!ifttt_support && !alexa_support){
@@ -661,9 +645,6 @@ define(function(){
 //				if(!cooler_support){
 //					retArray.push("Advanced_PerformanceTuning_Content.asp");
 //				}
-
-				if(!rrsut_support)
-					retArray.push("cloud_router_sync.asp");
 
 				if(!amesh_support)
 					retArray.push("Advanced_Roaming_Block_Content.asp");

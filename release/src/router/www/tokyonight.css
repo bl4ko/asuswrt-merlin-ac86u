@@ -23,7 +23,7 @@ body, body.wrapper, .content, .NM_table, .statusbody {
   border-color: var(--tn-border) !important;
   text-shadow: none !important;
 }
-.menu:hover, .menu_clicked, .menu_QIS_title:hover,
+.menu:hover, .menu_clicked, .menuClicked, .menu_QIS_title:hover,
 .tab-click, .tab-block:hover, .tabClicked, .tab_item_click {
   background: #414868 !important;
   color: #c0caf5 !important;
@@ -46,7 +46,7 @@ input[type=button], input[type=submit] {
 }
 a, .hyperlink, .faq-link { color: var(--tn-blue) !important; }
 a:hover { color: #7dcfff !important; }
-.menu a, .menu_clicked a { color: var(--tn-text) !important; }
+.menu a, .menu_clicked a, .menuClicked a { color: var(--tn-text) !important; }
 .titledropdownbtn::after { content: " ▾"; }
 .table-content, .table-content-first { border-color: var(--tn-border) !important; }
 :focus-visible { outline: 2px solid #7dcfff !important; outline-offset: 2px; }
