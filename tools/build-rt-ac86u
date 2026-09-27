@@ -9,31 +9,39 @@ mkdir -p "$output"
 
 docker run --rm --platform linux/amd64 --user root \
   --env SOURCE_REVISION="$revision" \
+  --env OUTPUT_UID="$(id -u)" --env OUTPUT_GID="$(id -g)" \
+  --mount "type=bind,source=$root,destination=/project,readonly" \
   --mount "type=volume,source=asuswrt-ac86u-$revision,destination=/build" \
   --mount "type=bind,source=$output,destination=/artifacts" \
   "$image" bash -lc '
     set -euo pipefail
     if [ ! -d /build/source/.git ]; then
       git init /build/source
-      git -C /build/source remote add origin https://github.com/bl4ko/asuswrt-merlin-ac86u.git
+      git -C /build/source remote add origin /project
+      git -C /build/source sparse-checkout init --cone
+      git -C /build/source sparse-checkout set tools release/src release/src-rt release/src-rt-5.02hnd
     fi
     cd /build/source
+    git config --global --add safe.directory /build/source
+    git config --global --add safe.directory /project
+    git remote set-url origin /project
     git config extensions.partialClone origin
     git config remote.origin.promisor true
     git config remote.origin.partialclonefilter blob:none
-    git fetch --no-tags --depth 1 --filter=blob:none origin "$SOURCE_REVISION"
-    git sparse-checkout init --cone
-    git sparse-checkout set tools release/src release/src-rt release/src-rt-5.02hnd
+    git fetch --upload-pack="git -c uploadpack.allowFilter=true upload-pack" \
+      --no-tags --depth 1 --filter=blob:none origin "$SOURCE_REVISION"
     git checkout --detach --force FETCH_HEAD
     git clean -ffdqx
     set +u
     source /home/docker/envs/bcm-hnd.sh
     set -u
-    make -C release/src-rt-5.02hnd rt-ac86u
+    chown -R docker:docker /build/source
+    gosu docker make -C release/src-rt-5.02hnd rt-ac86u
     images=(release/src-rt-5.02hnd/image/RT-AC86U_*_ubi.w)
     test -f "${images[0]}"
     cp "${images[@]}" /artifacts/
     git rev-parse HEAD > /artifacts/source-commit.txt
     cd /artifacts
     sha256sum RT-AC86U_*_ubi.w > SHA256SUMS
+    chown "$OUTPUT_UID:$OUTPUT_GID" RT-AC86U_*_ubi.w source-commit.txt SHA256SUMS
   '

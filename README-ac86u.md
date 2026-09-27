@@ -12,13 +12,13 @@ Install and start Docker, then run from this repository:
 bash tools/build-rt-ac86u
 ```
 
-The script builds the current committed revision fetched from this GitHub fork. Push changes before building; local uncommitted edits are not included. To rebuild another published revision:
+The script builds the current local committed revision through a read-only repository mount. No GitHub push is required; uncommitted edits are not included. To rebuild another local revision:
 
 ```sh
 bash tools/build-rt-ac86u 386.14_2
 ```
 
-The toolchain image is pinned by digest and uses upstream's `bcm-hnd.sh` environment and `make rt-ac86u` target. Source checkout and compilation happen inside a case-sensitive Docker volume. Apple Silicon uses Linux amd64 emulation. Allow substantial disk space and several hours for a first build.
+The toolchain image is pinned by digest and uses upstream's `bcm-hnd.sh` environment and `make rt-ac86u` target as its unprivileged `docker` user. Source checkout and compilation happen inside a case-sensitive Docker volume. Apple Silicon uses Linux amd64 emulation. Allow substantial disk space and several hours for a first build. A partial clone needs the selected model's source objects cached locally before building.
 
 Images, SHA-256 checksums, and the source revision are written to `artifacts/<commit>/`. Build volumes are retained to avoid repeating source downloads; rebuilds clean generated files before compilation. Remove a volume when finished using `docker volume rm asuswrt-ac86u-<commit>`.
 
