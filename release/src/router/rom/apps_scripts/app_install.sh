@@ -3,7 +3,7 @@
 # $1: package name, $2: device name.
 
 
-if [ "$1" = "aicloud" ] && ! nvram get rc_support | grep -qw cloudsync; then
+if { [ "$1" = "aicloud" ] || [ "$1" = "smartsync" ]; } && ! nvram get rc_support | grep -qw cloudsync; then
 	exit 1
 fi
 

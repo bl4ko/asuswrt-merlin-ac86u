@@ -31,8 +31,16 @@ with tempfile.TemporaryDirectory() as directory:
     nvram = Path(directory) / "nvram"
     nvram.write_text("#!/bin/sh\nexit 0\n")
     nvram.chmod(0o755)
-    result = subprocess.run(["sh", str(router / "rom/apps_scripts/app_install.sh"), "aicloud"], env=dict(os.environ, PATH=f"{directory}:{os.environ['PATH']}"), capture_output=True)
-    assert result.returncode == 1 and not result.stderr, result
+    for package in ("aicloud", "smartsync"):
+        result = subprocess.run(["sh", str(router / "rom/apps_scripts/app_install.sh"), package], env=dict(os.environ, PATH=f"{directory}:{os.environ['PATH']}"), capture_output=True)
+        assert result.returncode == 1 and not result.stderr, result
+
+    guard = (router / "rom/apps_scripts/app_init_run.sh").read_text().split('tmp_apps_name=`get_apps_name $f`', 1)[1].split('if [ "$1" != "allpkg" ]', 1)[0]
+    for package, action, expected in (("aicloud", "start", ""), ("smartsync", "start", ""), ("aicloud", "stop", "run\n"), ("downloadmaster", "start", "run\n")):
+        shell = f'tmp_apps_name={package}\nset -- allpkg {action}\nfor item in once; do\n{guard}\necho run\ndone'
+        output = subprocess.check_output(["sh", "-c", shell], env=dict(os.environ, PATH=f"{directory}:{os.environ['PATH']}"), text=True)
+        assert output == expected, (package, action, output)
+
 
 print("Cloud removal checks passed")
 

@@ -52,6 +52,10 @@ done
 for f in $APPS_RUN_DIR/S*; do
 	s=$f
 	tmp_apps_name=`get_apps_name $f`
+	if { [ "$tmp_apps_name" = "aicloud" ] || [ "$tmp_apps_name" = "smartsync" ]; } &&
+	   [ "$2" != "stop" ] && ! nvram get rc_support | grep -qw cloudsync; then
+		continue
+	fi
 	if [ "$1" != "allpkg" ] && [ "$1" != "$tmp_apps_name" ]; then
 		continue
 	fi
