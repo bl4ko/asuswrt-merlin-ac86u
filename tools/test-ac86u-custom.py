@@ -46,6 +46,25 @@ with tempfile.TemporaryDirectory() as directory:
 
 print("Cloud removal checks passed")
 
+with tempfile.TemporaryDirectory() as directory:
+    source = (router / "rc/bwdpi_disabled.c").read_text() + r'''
+#include <assert.h>
+int main(void) {
+    void *mesh = (void *)1;
+    struct udb_ioc_entry *users = (void *)1;
+    unsigned int mesh_len = 1;
+    uint32_t user_len = 1;
+    assert(!check_tdts_module_exist() && !check_bwdpi_nvram_setting() && !check_wrs_switch());
+    assert(get_fw_mesh_extender(&mesh, &mesh_len) == -1 && !mesh && !mesh_len);
+    assert(get_fw_user_list(&users, &user_len) == -1 && !users && !user_len);
+    assert(get_fw_mesh_extender(NULL, NULL) == -1 && get_fw_user_list(NULL, NULL) == -1);
+    assert(mesh_set_extender(NULL, 0) == -1);
+}
+'''
+    binary = str(Path(directory) / "check")
+    subprocess.run(["cc", "-x", "c", "-o", binary, "-"], input=source, text=True, check=True)
+    subprocess.run([binary], check=True)
+
 source = (router / "rc/lan.c").read_text()
 helper = source.split("int restrict_router_egress(void)", 1)[1].split("\n#endif", 1)[0]
 harness = r'''

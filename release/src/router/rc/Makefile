@@ -666,6 +666,10 @@ OBJS += bwdpi_wred_alive.o
 OBJS += bwdpi_db_10.o
 
 OBJS += hour_monitor.o
+else
+ifeq ($(BUILD_NAME),RT-AC86U)
+OBJS += bwdpi_disabled.o
+endif
 endif
 
 ifeq ($(RTCONFIG_AMAS),y)
