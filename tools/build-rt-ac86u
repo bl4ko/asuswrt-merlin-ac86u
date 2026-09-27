@@ -4,11 +4,14 @@ set -euo pipefail
 root=$(git rev-parse --show-toplevel)
 revision=$(git rev-parse --verify "${1:-HEAD}^{commit}")
 image=gnuton/asuswrt-merlin-toolchains-docker@sha256:8c9681987352d6eb8a38708126c9c39edd8dd28a7bf6c0cedc0e9534387f9ab3
+jobs=${BUILD_JOBS:-12}
+[[ $jobs =~ ^[1-9][0-9]*$ ]] || { echo 'BUILD_JOBS must be a positive integer' >&2; exit 1; }
 output="$root/artifacts/$revision"
 mkdir -p "$output"
 
 docker run --rm --platform linux/amd64 --user root \
   --env SOURCE_REVISION="$revision" \
+  --env BUILD_JOBS="$jobs" \
   --env OUTPUT_UID="$(id -u)" --env OUTPUT_GID="$(id -g)" \
   --mount "type=bind,source=$root,destination=/project,readonly" \
   --mount "type=volume,source=asuswrt-ac86u-$revision,destination=/build" \
@@ -30,7 +33,7 @@ docker run --rm --platform linux/amd64 --user root \
     source /home/docker/envs/bcm-hnd.sh
     set -u
     chown -R docker:docker /build/source
-    gosu docker make -C release/src-rt-5.02hnd rt-ac86u
+    gosu docker make -C release/src-rt-5.02hnd rt-ac86u PARALLEL_BUILD="-j$BUILD_JOBS" BRCM_MAX_JOBS="$BUILD_JOBS"
     if test -x tools/check-ac86u-rootfs; then
       bash tools/check-ac86u-rootfs /build/source
     fi

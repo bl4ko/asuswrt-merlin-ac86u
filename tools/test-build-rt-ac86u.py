@@ -15,10 +15,15 @@ with tempfile.TemporaryDirectory() as directory:
     arguments = (temporary / "args").read_text().splitlines()
     assert "linux/amd64" in arguments
     assert f"SOURCE_REVISION={revision}" in arguments
+    assert "BUILD_JOBS=12" in arguments
     assert f"OUTPUT_UID={os.getuid()}" in arguments
     assert "gosu docker make -C release/src-rt-5.02hnd rt-ac86u" in "\n".join(arguments)
     assert f"type=volume,source=asuswrt-ac86u-{revision},destination=/build" in arguments
     assert f"type=bind,source={root},destination=/project,readonly" in arguments
     assert "gnuton/asuswrt-merlin-toolchains-docker@sha256:8c9681987352d6eb8a38708126c9c39edd8dd28a7bf6c0cedc0e9534387f9ab3" in arguments
     assert subprocess.run(["bash", "tools/build-rt-ac86u", "missing-build-revision"], cwd=root, env=environment, capture_output=True).returncode != 0
+    for jobs in ("0", "invalid", "-1"):
+        assert subprocess.run(["bash", "tools/build-rt-ac86u", "386.14_2"], cwd=root, env=dict(environment, BUILD_JOBS=jobs), capture_output=True).returncode != 0
+    subprocess.run(["bash", "tools/build-rt-ac86u", "386.14_2"], cwd=root, env=dict(environment, BUILD_JOBS="4"), check=True)
+    assert "BUILD_JOBS=4" in (temporary / "args").read_text().splitlines()
 print("Build launcher checks passed")

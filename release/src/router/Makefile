@@ -7940,7 +7940,7 @@ ncurses-6.0/Makefile: ncurses-6.0/configure
 
 ncurses-6.0: ncurses-6.0/Makefile
 	@$(SEP)
-	cd ncurses-6.0 && $(MAKE) && $(MAKE) -C misc pc-files
+	cd ncurses-6.0 && $(MAKE) $(PARALLEL_BUILD) && $(MAKE) -C misc pc-files
 
 ncurses-6.0-clean:
 	[ ! -f ncurses-6.0/Makefile ] || $(MAKE) -C ncurses-6.0 distclean
@@ -7986,7 +7986,7 @@ nano-install:
 
 nano: ncurses-6.0 nano/Makefile
 	@$(SEP)
-	$(MAKE) -C $@
+	$(MAKE) -C $@ $(PARALLEL_BUILD)
 
 nettle/stamp-h1:
 	@cd nettle && \
@@ -8071,7 +8071,7 @@ nfs-utils-1.3.4/stamp-h1:
 	@touch $@
 
 nfs-utils-1.3.4: nfs-utils-1.3.4/stamp-h1
-	$(MAKE) -C $@
+	$(MAKE) -C $@ $(PARALLEL_BUILD)
 
 nfs-utils-1.3.4-clean:
 	-@$(MAKE) -C nfs-utils-1.3.4 distclean
@@ -9747,5 +9747,4 @@ $(obj-y) $(obj-n) $(obj-clean) $(obj-install): dummy
 .PHONY: all clean distclean mrproper install package image
 .PHONY: conf mconf oldconf kconf kmconf config menuconfig oldconfig
 .PHONY: dummy libnet libpcap
-
 
