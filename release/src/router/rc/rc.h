@@ -1555,6 +1555,9 @@ extern void redirect_nat_setting(void);
 extern void set_load_balance(void);
 #endif
 extern void ip2class(char *lan_ip, char *netmask, char *buf);
+#ifdef RTAC86U
+extern int restrict_router_egress(void);
+#endif
 #ifdef RTCONFIG_WIFI_SON
 extern void set_cap_apmode_filter(void);
 #endif

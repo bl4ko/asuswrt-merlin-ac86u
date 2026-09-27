@@ -1094,6 +1094,11 @@ _dprintf("%s: IFUP.\n", __FUNCTION__);
 		ifconfig(lan_ifname, IFUP | IFF_ALLMULTI, nvram_default_get("lan_ipaddr"), nvram_default_get("lan_netmask"));
 	}
 
+#ifdef RTAC86U
+	if (restrict_router_egress())
+		return -1;
+#endif
+
 	expires_lan(lan_ifname, 0);
 
 	lan_down(lan_ifname);
@@ -1186,6 +1191,11 @@ _dprintf("%s: IFUP.\n", __FUNCTION__);
 #ifdef RTCONFIG_AMAS_WGN
 	/* move qos restart here to trigger early */
 	restart_re_qos();
+#endif
+
+#ifdef RTAC86U
+	if (restrict_router_egress())
+		return -1;
 #endif
 
 	ipaddr = getifaddr(lan_ifname, AF_INET, 0);

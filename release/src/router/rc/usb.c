@@ -4654,6 +4654,7 @@ if (nvram_match("asus_mfg", "0")) {
 #ifdef RTCONFIG_TIMEMACHINE
 	start_timemachine();
 #endif
+#ifdef RTCONFIG_WEBDAV
 	char *usbuipath=nvram_safe_get("usbUIpath");
 	if(strlen(usbuipath) > 0){
 	   if(d_exists(usbuipath) || f_exists(usbuipath)){
@@ -4662,6 +4663,7 @@ if (nvram_match("asus_mfg", "0")) {
 	      symlink(usbuipath, "/tmp/lighttpd/www/USB");
 	   }
 	}
+#endif
 }
 
 void stop_nas_services(int force)

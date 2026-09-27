@@ -16,6 +16,7 @@ for name in ("rc/usb.c", "rc/services.c", "rc/firewall.c", "httpd/web.c", "httpd
     output = subprocess.check_output(["cc", "-E", "-P", "-x", "c", "-DRTCONFIG_USB", "-DKERNEL_VERSION(a,b,c)=((a<<16)+(b<<8)+c)", "-"], input=source, text=True)
     assert "S50aicloud" not in output and "S50smartsync" not in output, name
     if name == "rc/usb.c":
+        assert "lighttpd" not in output
         for signature in ("start_webdav(void)", "stop_webdav(void)", "start_cloudsync(int fromUI)", "stop_cloudsync(int type)"):
             assert re.search(re.escape(signature) + r"\s*\{\s*\}", output), signature
     if name == "rc/firewall.c":
@@ -36,7 +37,7 @@ with tempfile.TemporaryDirectory() as directory:
 print("Cloud removal checks passed")
 
 source = (router / "rc/lan.c").read_text()
-helper = source.split("static int restrict_router_egress(void)", 1)[1].split("\n#endif", 1)[0]
+helper = source.split("int restrict_router_egress(void)", 1)[1].split("\n#endif", 1)[0]
 harness = r'''
 #include <arpa/inet.h>
 #include <stdarg.h>

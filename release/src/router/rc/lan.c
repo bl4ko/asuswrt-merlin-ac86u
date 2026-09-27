@@ -1253,7 +1253,7 @@ void update_subnet_rulelist(void){
 }
 #endif
 #ifdef RTAC86U
-static int restrict_router_egress(void)
+int restrict_router_egress(void)
 {
 	struct in_addr address, mask;
 	char subnet[32];
