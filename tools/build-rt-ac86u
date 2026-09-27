@@ -14,11 +14,14 @@ docker run --rm --platform linux/amd64 --user root \
   "$image" bash -lc '
     set -euo pipefail
     if [ ! -d /build/source/.git ]; then
-      git clone --depth 1 --filter=blob:none --no-checkout --branch rt-ac86u \
-        https://github.com/bl4ko/asuswrt-merlin-ac86u.git /build/source
+      git init /build/source
+      git -C /build/source remote add origin https://github.com/bl4ko/asuswrt-merlin-ac86u.git
     fi
     cd /build/source
-    git fetch --depth 1 --filter=blob:none origin "$SOURCE_REVISION"
+    git config extensions.partialClone origin
+    git config remote.origin.promisor true
+    git config remote.origin.partialclonefilter blob:none
+    git fetch --no-tags --depth 1 --filter=blob:none origin "$SOURCE_REVISION"
     git sparse-checkout init --cone
     git sparse-checkout set tools release/src release/src-rt release/src-rt-5.02hnd
     git checkout --detach --force FETCH_HEAD
