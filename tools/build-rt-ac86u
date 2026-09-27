@@ -15,23 +15,17 @@ docker run --rm --platform linux/amd64 --user root \
   --mount "type=bind,source=$output,destination=/artifacts" \
   "$image" bash -lc '
     set -euo pipefail
-    if [ ! -d /build/source/.git ]; then
-      git init /build/source
-      git -C /build/source remote add origin /project
-      git -C /build/source sparse-checkout init --cone
-      git -C /build/source sparse-checkout set tools release/src release/src-rt release/src-rt-5.02hnd
-    fi
+    mkdir -p /build/source/.git
+    rsync -a /project/.git/ /build/source/.git/
     cd /build/source
     git config --global --add safe.directory /build/source
-    git config --global --add safe.directory /project
-    git remote set-url origin /project
-    git config extensions.partialClone origin
-    git config remote.origin.promisor true
-    git config remote.origin.partialclonefilter blob:none
-    git fetch --upload-pack="git -c uploadpack.allowFilter=true upload-pack" \
-      --no-tags --depth 1 --filter=blob:none origin "$SOURCE_REVISION"
-    git checkout --detach --force FETCH_HEAD
+    git config extensions.worktreeConfig false
+    git config core.ignorecase false
+    git reset --hard "$SOURCE_REVISION"
     git clean -ffdqx
+    git sparse-checkout init --cone
+    git sparse-checkout set tools release/src release/src-rt release/src-rt-5.02hnd
+    git checkout --detach "$SOURCE_REVISION"
     set +u
     source /home/docker/envs/bcm-hnd.sh
     set -u
