@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root=$(git rev-parse --show-toplevel)
+revision=$(git rev-parse --verify "${1:-HEAD}^{commit}")
+image=gnuton/asuswrt-merlin-toolchains-docker@sha256:8c9681987352d6eb8a38708126c9c39edd8dd28a7bf6c0cedc0e9534387f9ab3
+output="$root/artifacts/$revision"
+mkdir -p "$output"
+
+docker run --rm --platform linux/amd64 --user root \
+  --env SOURCE_REVISION="$revision" \
+  --mount "type=volume,source=asuswrt-ac86u-$revision,destination=/build" \
+  --mount "type=bind,source=$output,destination=/artifacts" \
+  "$image" bash -lc '
+    set -euo pipefail
+    if [ ! -d /build/source/.git ]; then
+      git init /build/source
+      git -C /build/source remote add origin https://github.com/bl4ko/asuswrt-merlin-ac86u.git
+    fi
+    cd /build/source
+    git fetch --depth 1 --filter=blob:none origin "$SOURCE_REVISION"
+    git sparse-checkout init --cone
+    git sparse-checkout set tools release/src release/src-rt release/src-rt-5.02hnd
+    git checkout --detach --force FETCH_HEAD
+    git clean -ffdqx
+    set +u
+    source /home/docker/envs/bcm-hnd.sh
+    set -u
+    make -C release/src-rt-5.02hnd rt-ac86u
+    images=(release/src-rt-5.02hnd/image/RT-AC86U_*_ubi.w)
+    test -f "${images[0]}"
+    cp "${images[@]}" /artifacts/
+    git rev-parse HEAD > /artifacts/source-commit.txt
+    cd /artifacts
+    sha256sum RT-AC86U_*_ubi.w > SHA256SUMS
+  '
