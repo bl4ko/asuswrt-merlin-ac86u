@@ -3,6 +3,10 @@
 # $1: package name, $2: device name.
 
 
+if [ "$1" = "aicloud" ] && ! nvram get rc_support | grep -qw cloudsync; then
+	exit 1
+fi
+
 apps_ipkg_old=`nvram get apps_ipkg_old`
 APPS_PATH=/opt
 CONF_FILE=$APPS_PATH/etc/ipkg.conf

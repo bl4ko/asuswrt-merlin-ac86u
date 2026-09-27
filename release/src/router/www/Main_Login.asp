@@ -638,6 +638,7 @@ function regen_captcha(){
 	captcha_pic.src = "captcha.gif" + queryString;
 }
 </script>
+<link rel="stylesheet" href="/tokyonight.css">
 </head>
 <body class="wrapper" onload="initial();">
 <iframe name="hidden_frame" id="hidden_frame" width="0" height="0" frameborder="0"></iframe>

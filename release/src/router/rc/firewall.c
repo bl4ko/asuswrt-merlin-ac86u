@@ -1877,7 +1877,7 @@ void nat_setting(char *wan_if, char *wan_ip, char *wanx_if, char *wanx_ip, char 
 		}
 #endif
 
-#if 1 /* def RTCONFIG_WEBDAV */
+#ifdef RTCONFIG_WEBDAV
 		if (nvram_match("webdav_aidisk", "1")) {
 			int port;
 
@@ -2382,7 +2382,7 @@ void nat_setting2(char *lan_if, char *lan_ip, char *logaccept, char *logdrop)	//
 		}
 #endif
 
-#if 1 /* def RTCONFIG_WEBDAV */
+#ifdef RTCONFIG_WEBDAV
 		if (nvram_match("webdav_aidisk", "1")) {
 			int port;
 

@@ -10933,9 +10933,6 @@ start_services(void)
 
 #ifdef RTCONFIG_WEBDAV
 	start_webdav();
-#else
-	if(f_exists("/opt/etc/init.d/S50aicloud"))
-		system("sh /opt/etc/init.d/S50aicloud scan");
 #endif
 
 #ifdef RTCONFIG_TUNNEL
@@ -11175,9 +11172,6 @@ stop_services(void)
 
 #ifdef RTCONFIG_WEBDAV
 	stop_webdav();
-#else
-	if(f_exists("/opt/etc/init.d/S50aicloud"))
-		system("sh /opt/etc/init.d/S50aicloud scan");
 #endif
 #ifdef RTCONFIG_TUNNEL
 	stop_mastiff();
@@ -15479,15 +15473,6 @@ check_ddr_done:
 			start_upnp();
 		}
 	}
-#else
-	else if (strcmp(script, "webdav") == 0){
-		if(f_exists("/opt/etc/init.d/S50aicloud"))
-			system("sh /opt/etc/init.d/S50aicloud scan");
-	}
-	else if (strcmp(script, "setting_webdav") == 0){
-		if(f_exists("/opt/etc/init.d/S50aicloud"))
-			system("sh /opt/etc/init.d/S50aicloud restart");
-	}
 #endif
 #ifdef RTCONFIG_BCMWL6
 	else if (strcmp(script, "acsd") == 0)
@@ -15500,13 +15485,12 @@ check_ddr_done:
 		}
 	}
 #endif	/* RTCONFIG_BCMWL6 */
+#ifdef RTCONFIG_WEBDAV
 	else if (strcmp(script, "enable_webdav") == 0)
 	{
 		stop_upnp();
 		stop_ddns();
-#ifdef RTCONFIG_WEBDAV
 		stop_webdav();
-#endif
 		start_firewall(wan_primary_ifunit(), 0);
 		start_webdav();
 		start_ddns(NULL);
@@ -15514,11 +15498,11 @@ check_ddr_done:
 
 	}
 
-//#endif
-//#ifdef RTCONFIG_CLOUDSYNC
+#endif
+
+#ifdef RTCONFIG_CLOUDSYNC
 	else if (strcmp(script, "cloudsync") == 0)
 	{
-#ifdef RTCONFIG_CLOUDSYNC
 		int fromUI = 0;
 
 		if(action & RC_SERVICE_STOP && action & RC_SERVICE_START)
@@ -15531,10 +15515,8 @@ check_ddr_done:
 				stop_cloudsync(-1);
 		}
 		if(action & RC_SERVICE_START) start_cloudsync(fromUI);
-#else
-		system("sh /opt/etc/init.d/S50smartsync restart");
-#endif
 	}
+#endif
 #ifdef RTCONFIG_WTFAST
 	else if (strcmp(script, "wtfast") == 0)
 	{

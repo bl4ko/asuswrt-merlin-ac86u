@@ -2396,7 +2396,7 @@ ej_dump(int eid, webs_t wp, int argc, char_t **argv)
 		snprintf(filename, sizeof(filename), "%s/%s", path, file);
 		ret += dump_file_filter(wp, filename, syslog_msg_filter);
 	}
-//#ifdef RTCONFIG_CLOUDSYNC
+#if defined(RTCONFIG_CLOUDSYNC) || defined(RTCONFIG_WEBDAV)
 	else if(!strcmp(file, "cloudsync.log")){
 		snprintf(filename, sizeof(filename), "/tmp/smartsync/.logs/system.log");
 		ret += dump_file(wp, filename);
@@ -2409,7 +2409,7 @@ ej_dump(int eid, webs_t wp, int argc, char_t **argv)
 		snprintf(filename, sizeof(filename), "/tmp/%s", file);
 		ret += dump_file(wp, filename);
 	}
-//#endif
+#endif
 #ifdef RTCONFIG_OPENVPN
 	else if(!strcmp(file, "openvpn_connected")){
 		int unit = nvram_get_int("vpn_server_unit");
@@ -12492,7 +12492,7 @@ wps_finish:
 		websRedirect(wp, current_url);
 	}
 #endif
-//#ifdef RTCONFIG_CLOUDSYNC // get share link from lighttpd. Jerry5 added 2012.11.08
+#ifdef RTCONFIG_WEBDAV
 	else if (!strcmp(action_mode, "get_sharelink"))
 	{
 		FILE *fp;
@@ -12523,7 +12523,7 @@ wps_finish:
 			}
 		}
 	}
-//#endif
+#endif
 #ifdef RTCONFIG_OPENVPN
 	else if (!strcmp(action_mode, "change_vpn_server_unit"))
 	{
@@ -24814,7 +24814,7 @@ int ej_dms_info(int eid, webs_t wp, int argc, char **argv){
 }
 #endif
 
-//#ifdef RTCONFIG_CLOUDSYNC
+#ifdef RTCONFIG_CLOUDSYNC
 static char *convert_cloudsync_status(const char *status_code){
 	if(!strcmp(status_code, "STATUS:70"))
 		return "INITIAL";
@@ -25434,6 +25434,7 @@ int ej_UI_rs_status(int eid, webs_t wp, int argc, char **argv){
 }
 
 #endif
+#endif
 
 #define WEBDEVINFO_VER 5 //log ej_webdavInfo
 /* lv2: add nvram odmpid, productid, extendno info */
@@ -25461,6 +25462,7 @@ int ej_webdavInfo(int eid, webs_t wp, int argc, char **argv) {
 	websWrite(wp, "'%s',", get_lan_hwaddr());
 	websWrite(wp, "''];\n");
 
+#ifdef RTCONFIG_WEBDAV
 	websWrite(wp, "// webdavInfo=['Webdav','HTTPType','HTTPPort','DDNS','HostName','WAN0IPAddr','','xSetting','HTTPSPort'];\n");
 	websWrite(wp, "webdavInfo=['%s',", nvram_safe_get("enable_webdav"));
 	websWrite(wp, "'%s',", nvram_safe_get("st_webdav_mode"));
@@ -25471,13 +25473,12 @@ int ej_webdavInfo(int eid, webs_t wp, int argc, char **argv) {
 	websWrite(wp, "'%s',", nvram_safe_get(""));
 	websWrite(wp, "'%s',", nvram_safe_get("x_Setting"));
 	websWrite(wp, "'%s',", nvram_safe_get("webdav_https_port"));
-#ifdef RTCONFIG_WEBDAV
  	websWrite(wp, "'1'");
-#else
-	if(check_if_file_exist("/opt/etc/init.d/S50aicloud")) websWrite(wp, "'1'");
-	else websWrite(wp, "'0'");
-#endif
 	websWrite(wp, "];\n");
+
+#else
+	websWrite(wp, "webdavInfo=['0','0','0','0','','','','0','0','0'];\n");
+#endif
 
 	websWrite(wp, "// toAPPInfo=['Ver','ExtendCap', 'label_mac', 'odmpid', 'productid', 'extendno', 'rtinfo', 'w_Setting', 'app_mnt', 'mtlancfg', 'BUSINESS', 'CoBrand', ''];\n");
 	websWrite(wp, "toAPPInfo=['%d'", WEBDEVINFO_VER);
@@ -33052,7 +33053,7 @@ struct ej_handler ej_handlers[] = {
 #ifdef RTCONFIG_MEDIA_SERVER
 	{ "dms_info", ej_dms_info},
 #endif
-//#ifdef RTCONFIG_CLOUDSYNC
+#ifdef RTCONFIG_CLOUDSYNC
 	{ "cloud_status", ej_cloud_status},
 	{ "UI_cloud_status", ej_UI_cloud_status},
 	{ "UI_cloud_dropbox_status", ej_UI_cloud_dropbox_status},
@@ -33060,7 +33061,7 @@ struct ej_handler ej_handlers[] = {
 	{ "UI_cloud_sambaclient_status", ej_UI_cloud_sambaclient_status},
 	{ "UI_cloud_usbclient_status", ej_UI_cloud_usbclient_status},
 	{ "UI_rs_status", ej_UI_rs_status},
-//#endif
+#endif
 #endif
 	{ "getWebdavInfo", ej_webdavInfo},
 	{ "start_autodet", start_autodet},

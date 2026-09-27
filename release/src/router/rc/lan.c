@@ -1252,6 +1252,47 @@ void update_subnet_rulelist(void){
 	}
 }
 #endif
+#ifdef RTAC86U
+static int restrict_router_egress(void)
+{
+	struct in_addr address, mask;
+	char subnet[32];
+	unsigned long inverse;
+
+	if (eval("iptables", "-t", "raw", "-P", "OUTPUT", "DROP") ||
+	    eval("ip6tables", "-t", "raw", "-P", "OUTPUT", "DROP")) {
+		logmessage("LAN only", "Cannot restrict router traffic; LAN startup stopped");
+		return -1;
+	}
+
+	eval("iptables", "-t", "raw", "-N", "BL4KO_LAN");
+	eval("iptables", "-t", "raw", "-F", "BL4KO_LAN");
+	eval("iptables", "-t", "raw", "-A", "BL4KO_LAN", "-o", "lo", "-j", "ACCEPT");
+	if (inet_pton(AF_INET, nvram_safe_get("lan_ipaddr"), &address) == 1 &&
+	    inet_pton(AF_INET, nvram_safe_get("lan_netmask"), &mask) == 1 && mask.s_addr) {
+		inverse = ~ntohl(mask.s_addr) & 0xffffffffUL;
+		if (!(inverse & (inverse + 1)) && address.s_addr) {
+			ip2class(nvram_safe_get("lan_ipaddr"), nvram_safe_get("lan_netmask"), subnet);
+			eval("iptables", "-t", "raw", "-A", "BL4KO_LAN", "-d", subnet, "-j", "ACCEPT");
+		}
+	}
+	eval("iptables", "-t", "raw", "-A", "BL4KO_LAN", "-d", "224.0.0.0/24", "-j", "ACCEPT");
+	eval("iptables", "-t", "raw", "-A", "BL4KO_LAN", "-d", "255.255.255.255", "-p", "udp", "--sport", "68", "--dport", "67", "-j", "ACCEPT");
+	if (eval("iptables", "-t", "raw", "-C", "OUTPUT", "-j", "BL4KO_LAN"))
+		eval("iptables", "-t", "raw", "-I", "OUTPUT", "1", "-j", "BL4KO_LAN");
+
+	eval("ip6tables", "-t", "raw", "-N", "BL4KO_LAN");
+	eval("ip6tables", "-t", "raw", "-F", "BL4KO_LAN");
+	eval("ip6tables", "-t", "raw", "-A", "BL4KO_LAN", "-o", "lo", "-j", "ACCEPT");
+	eval("ip6tables", "-t", "raw", "-A", "BL4KO_LAN", "-d", "fe80::/10", "-j", "ACCEPT");
+	eval("ip6tables", "-t", "raw", "-A", "BL4KO_LAN", "-d", "ff02::/16", "-j", "ACCEPT");
+	if (eval("ip6tables", "-t", "raw", "-C", "OUTPUT", "-j", "BL4KO_LAN"))
+		eval("ip6tables", "-t", "raw", "-I", "OUTPUT", "1", "-j", "BL4KO_LAN");
+
+	return 0;
+}
+#endif
+
 void start_lan(void)
 {
 	char *lan_ifname;
@@ -1285,6 +1326,11 @@ void start_lan(void)
 #endif /* __CONFIG_DHDAP__ */
 #ifdef HND_ROUTER
 	char bonding_ifnames[80];
+
+#ifdef RTAC86U
+	if (restrict_router_egress())
+		return;
+#endif
 
 	if (!is_routing_enabled())
 		fc_init();
@@ -3979,6 +4025,11 @@ lan_up(char *lan_ifname)
 #endif
 #ifdef RTCONFIG_WIRELESSREPEATER
 	char domain_mapping[64];
+#endif
+
+#ifdef RTAC86U
+	if (restrict_router_egress())
+		return;
 #endif
 
 	_dprintf("%s(%s)\n", __FUNCTION__, lan_ifname);

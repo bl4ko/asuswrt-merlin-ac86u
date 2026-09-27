@@ -2,7 +2,11 @@
 
 Personal fork of [Asuswrt-Merlin](https://github.com/RMerl/asuswrt-merlin.ng), based on tag `386.14_2`, commit `6a5df61aab6f3fa2dffc518994d42e4f2a27fb2b`.
 
-Firmware behavior is unchanged. The `rt-ac86u` branch adds a pinned container build for this model. It does not enable UniFi adoption or add security fixes beyond upstream 386.14_2.
+The `rt-ac86u` branch replaces the Merlin banner with **Powered by bl4ko**, applies a Tokyo Night theme, and removes AiCloud, Smart Sync, WebDAV and the shared ASUS remote-access tunnel. It also disables ASUS cloud security and gaming add-ons, public-IP detection, online speed tests, Let’s Encrypt and Instant Guard. Upstream source attribution and licenses are retained.
+
+The router itself is restricted to its configured IPv4 LAN subnet, loopback, local multicast and DHCP broadcasts. IPv6 traffic from the router is limited to loopback, link-local addresses and link-local multicast. These outbound rules load before LAN startup, refresh on DHCP changes and survive normal firewall reloads. They leave bridged Wi-Fi clients’ internet traffic available. Use a DNS or time server in the same LAN subnet; internet firmware checks and package downloads cannot work.
+
+This does not enable UniFi adoption or add security fixes beyond upstream 386.14_2. The firmware is being validated locally and has not been tested on hardware.
 
 ## Build
 
@@ -28,6 +32,7 @@ This is a repeatable source/toolchain setup, not a guarantee of byte-identical f
 
 ```sh
 python3 tools/test-build-rt-ac86u.py
+python3 tools/test-ac86u-custom.py
 ```
 
 Build procedure: [upstream documentation](https://github.com/RMerl/asuswrt-merlin.ng/wiki/Compile-Firmware-from-source).

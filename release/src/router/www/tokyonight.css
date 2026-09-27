@@ -1,0 +1,65 @@
+:root {
+  color-scheme: dark;
+  --tn-bg: #1a1b26;
+  --tn-panel: #24283b;
+  --tn-text: #c0caf5;
+  --tn-border: #414868;
+  --tn-blue: #7aa2f7;
+}
+body, body.wrapper, .content, .NM_table, .statusbody {
+  background: var(--tn-bg) !important;
+  color: var(--tn-text) !important;
+}
+.banner1, .menu, .menu_blocked, .menu_QIS_title, .menu_Split,
+.FormTitle, .FormTable, .FormTable th, .FormTable td,
+.FormTable_table, .FormTable_table th, .FormTable_table td,
+.statusTitle, .table1px, .table1px th, .table1px td,
+.unit-block, .info-content, .table-header, .table-body, .tab-click, .tab-block:hover,
+.popup_bg, .popup_container, .panel, .NM_radius,
+.NM_radius_left, .NM_radius_right, .NM_radius_bottom_container, .NM_radius_bottom {
+  background: var(--tn-panel) !important;
+  color: var(--tn-text) !important;
+  border-color: var(--tn-border) !important;
+  text-shadow: none !important;
+}
+.menu:hover, .menu_clicked, .menu_QIS_title:hover,
+.tab-click, .tab-block:hover {
+  background: #414868 !important;
+  color: #c0caf5 !important;
+  border-color: var(--tn-blue) !important;
+}
+input:not([type=checkbox]):not([type=radio]):not([type=button]):not([type=submit]),
+select, textarea, .input, .form_input {
+  background: var(--tn-bg) !important;
+  color: var(--tn-text) !important;
+  border-color: var(--tn-border) !important;
+  accent-color: var(--tn-blue);
+}
+input::placeholder, textarea::placeholder { color: #a9b1d6 !important; }
+button, .button_gen, .button_gen_long, .button_gen_short,
+input[type=button], input[type=submit] {
+  background: #414868 !important;
+  color: #c0caf5 !important;
+  border: 1px solid var(--tn-blue) !important;
+  text-shadow: none !important;
+}
+a, .hyperlink, .faq-link { color: var(--tn-blue) !important; }
+a:hover { color: #7dcfff !important; }
+:focus-visible { outline: 2px solid #7dcfff !important; outline-offset: 2px; }
+.division-block { border-left-color: #bb9af7 !important; }
+.bar-container, .svg-block { background: var(--tn-bg) !important; }
+.core-color-0 { background: #e0af68 !important; }
+.core-color-1 { background: #7dcfff !important; }
+.ram-color { background: var(--tn-blue) !important; }
+.wpa3_hint, .wl-ready { color: #e0af68 !important; }
+.error_hint, .warming_desc { color: #f7768e !important; }
+.bl4ko-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 52px;
+  color: #a9b1d6;
+  font: 13px Verdana, sans-serif;
+}
+.bl4ko-brand strong { color: #bb9af7; font-size: 22px; }

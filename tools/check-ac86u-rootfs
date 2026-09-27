@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source_root=${1:?Pass the firmware source directory}
+firmware="$source_root/release/src-rt-5.02hnd/targets/94908HND/fs.install"
+config="$source_root/release/src/router/.config"
+for feature in WEBDAV CLOUDSYNC TUNNEL AICLOUD_TUNNEL AIHOME_TUNNEL BWDPI WTFAST GETREALIP ASD ASUSCTRL UUPLUGIN LETSENCRYPT INSTANT_GUARD; do
+  if grep -qx "RTCONFIG_${feature}=y" "$config"; then
+    echo "Unexpected enabled feature: $feature" >&2
+    exit 1
+  fi
+done
+grep -qx 'CONFIG_IP6_NF_RAW=y' "$source_root/release/src-rt-5.02hnd/kernel/linux-4.1/.config"
+test -f "$firmware/www/tokyonight.css"
+grep -q 'Powered by <strong>bl4ko</strong>' "$firmware/www/state.js"
+grep -q '/tokyonight.css' "$firmware/www/Main_Login.asp"
+remaining=$(find "$firmware" \( -iname '*aicloud*' -o -iname 'cloud*.asp' -o -iname '*cloudstatus*' -o -name 'Advanced_AiDisk_webdav.asp' -o -name 'lighttpd*' -o -name 'smartsync*' -o -name 'webdav_client' -o -name 'asuswebstorage' -o -name 'dropbox_client' -o -name 'google_client' -o -name 'ftpclient' -o -name 'sambaclient' -o -name 'usbclient' -o -name 'mastiff*' -o -name '*asusnatnl*' -o -name 'aaews*' -o -name 'libaaews*' \) -print)
+if [ -n "$remaining" ]; then
+  echo "$remaining" >&2
+  exit 1
+fi
+echo 'Custom firmware filesystem checks passed'

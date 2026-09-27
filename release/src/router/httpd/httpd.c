@@ -549,6 +549,7 @@ send_login_page(int fromapp_flag, int error_status, char* url, char* file, int l
 	login_error_status = error_status;
 
 	if(fromapp_flag == 0){
+#ifdef RTCONFIG_CLOUDSYNC
 		if(strncmp(login_url, "cloud_sync.asp", strlen(login_url))==0){
 			if(file != NULL){
 				cp = strstr(file,"flag=");
@@ -559,7 +560,9 @@ send_login_page(int fromapp_flag, int error_status, char* url, char* file, int l
 				}
 			}
 		}
-		else if(strncmp(login_url, "cfg_onboarding.cgi", strlen(login_url))==0){
+		else
+#endif
+		if(strncmp(login_url, "cfg_onboarding.cgi", strlen(login_url))==0){
 			if(file != NULL){
 				cp = strstr(file,"id=");
 				if(cp != (char*) 0){
@@ -1518,6 +1521,7 @@ handle_request(void)
 	}
 
 	if (!handler->pattern){
+#ifdef RTCONFIG_CLOUDSYNC
 		if(strlen(file) > 50 && !(strstr(file, "findasus")) && !(strstr(file, "acme-challenge"))){
 			memset(cloud_file, 0, sizeof(cloud_file));
 			if(!check_xss_blacklist(file, 0))
@@ -1527,6 +1531,7 @@ handle_request(void)
 			send_page( 200, "OK", (char*) 0, inviteCode, 0);
 		}
 		else
+#endif
 			send_error( 404, "Not Found", (char*) 0, "File not found." );
 	}
 	nvram_unset("httpd_handle_request");

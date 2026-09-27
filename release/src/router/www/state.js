@@ -1,3 +1,4 @@
+document.write('<link rel="stylesheet" href="/tokyonight.css">');
 document.write('<script type="text/javascript" src="/require/require.min.js"></script>');
 document.write('<script type="text/javascript" src="/js/support_site.js"></script>');
 document.write('<script type="text/javascript" src="/notification.js"></script>');
@@ -517,9 +518,9 @@ var noiTunes_support = isSupport("noitunes");
 var nomedia_support = isSupport("nomedia");
 var noftp_support = isSupport("noftp");
 var noaidisk_support = isSupport("noaidisk");
-var cloudsync_support = isSupport("cloudsync");
+var cloudsync_support = false;
 var nocloudsync_support = isSupport("nocloudsync");
-var aicloudipk_support = isSupport("aicloudipk");
+var aicloudipk_support = false;
 var yadns_hideqis = isSupport("yadns_hideqis");
 var yadns_support = false;	//yadns_hideqis || isSupport("yadns");
 var dnspriv_support = isSupport("dnspriv");
@@ -1046,7 +1047,7 @@ function show_banner(L3){// L3 = The third Level of Menu
 	else{
 		banner_code +='<div class="banner1" align="center"><img src="images/New_ui/asustitle.png" width="218" height="54" align="left">\n';
 		banner_code +='<div style="margin-top:13px;margin-left:-90px;*margin-top:0px;*margin-left:0px;" align="center"><span id="modelName_top" onclick="this.focus();" class="modelName_top"><#Web_Title2#></span></div>';
-		banner_code +='<div style="margin-left:25px;width:160px;height:52px;margin-top:0px;float:left;" align="left"><span><a href="https://www.asuswrt-merlin.net/" target="_blank" rel="noreferrer"><img src="images/merlin-logo.png" style="border: 0;"></a></span></div>';
+		banner_code +='<div style="margin-left:25px;width:160px;height:52px;margin-top:0px;float:left;" align="left"><span><span class="bl4ko-brand">Powered by <strong>bl4ko</strong></span></span></div>';
 
 		// logout, reboot
 		banner_code +='<a href="javascript:logout();"><div style="margin-top:13px;margin-left:25px; *width:136px;" class="titlebtn" align="center"><span><#t1Logout#></span></div></a>\n';
@@ -1480,7 +1481,7 @@ function showMenuTree(menuList, menuExclude){
 		var getMenuCode = function(){
 			var menu_code = '<div style="margin-top:-172px">';
 			if (rog_support)
-				menu_code += '<div style="width:160px;height:52px;"><span><a href="https://www.asuswrt-merlin.net/" target="_blank" rel="noreferrer"><img src="images/merlin-logo.png" style="border: 0;"></a></span></div>';
+				menu_code += '<div style="width:160px;height:52px;"><span><span class="bl4ko-brand">Powered by <strong>bl4ko</strong></span></span></div>';
 			for(var i=0; i<menuList.length; i++){
 				var curMenu = menuList[i];
 				var firstEntry = -1;

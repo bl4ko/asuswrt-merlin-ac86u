@@ -31,6 +31,9 @@ docker run --rm --platform linux/amd64 --user root \
     set -u
     chown -R docker:docker /build/source
     gosu docker make -C release/src-rt-5.02hnd rt-ac86u
+    if test -x tools/check-ac86u-rootfs; then
+      bash tools/check-ac86u-rootfs /build/source
+    fi
     images=(release/src-rt-5.02hnd/image/RT-AC86U_*_ubi.w)
     test -f "${images[0]}"
     cp "${images[@]}" /artifacts/

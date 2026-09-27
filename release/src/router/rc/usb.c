@@ -1103,9 +1103,6 @@ void stop_usb_program(int mode)
 
 #ifdef RTCONFIG_WEBDAV
 	stop_webdav();
-#else
-	if(f_exists("/opt/etc/init.d/S50aicloud"))
-		system("sh /opt/etc/init.d/S50aicloud scan");
 #endif
 
 #ifdef RTCONFIG_USB_PRINTER
@@ -4140,17 +4137,11 @@ void start_webdav(void)	// added by Vanic
 	pid_t pid, pid1;
 	char *lighttpd_argv[] = { "/usr/sbin/lighttpd", "-f", "/tmp/lighttpd.conf", "-D", NULL };
 	char *lighttpd_monitor_argv[] = { "/usr/sbin/lighttpd-monitor", NULL };
-#endif
 
 	if(getpid()!=1) {
 		notify_rc("start_webdav");
 		return;
 	}
-/*
-#ifndef RTCONFIG_WEBDAV
-	system("sh /opt/etc/init.d/S50aicloud scan");
-#else
-*/
 	if (nvram_get_int("webdav_aidisk") || nvram_get_int("webdav_proxy"))
 		nvram_set("enable_webdav", "1");
 	else if (!nvram_get_int("webdav_aidisk") && !nvram_get_int("webdav_proxy") && nvram_get_int("enable_webdav"))
@@ -4162,16 +4153,6 @@ void start_webdav(void)	// added by Vanic
 
 	if (nvram_match("enable_webdav", "0")) return;
 
-/* Independent from AiCloud
-ifdef RTCONFIG_TUNNEL
-	//- start tunnel
-	start_mastiff();
-#endif*/
-
-#ifndef RTCONFIG_WEBDAV
-	if(f_exists("/opt/etc/init.d/S50aicloud"))
-		system("sh /opt/etc/init.d/S50aicloud scan");
-#else
 	/* WebDav directory */
 	mkdir_if_none("/tmp/lighttpd");
 	mkdir_if_none("/tmp/lighttpd/uploads");
@@ -4212,15 +4193,12 @@ ifdef RTCONFIG_TUNNEL
 
 void stop_webdav(void)
 {
+#ifdef RTCONFIG_WEBDAV
 	if (getpid() != 1) {
 		notify_rc("stop_webdav");
 		return;
 	}
 
-#ifndef RTCONFIG_WEBDAV
-	if(f_exists("/opt/etc/init.d/S50aicloud"))
-		system("sh /opt/etc/init.d/S50aicloud scan");
-#else
 	if (pids("lighttpd-monitor")){
 		kill_pidfile_tk("/tmp/lighttpd/lighttpd-monitor.pid");
 		unlink("/tmp/lighttpd/lighttpd-monitor.pid");
@@ -4242,13 +4220,6 @@ void stop_webdav(void)
 
 	logmessage("WEBDAV Server", "daemon is stopped");
 #endif
-
-/* Independent from AiCloud
-#ifdef RTCONFIG_TUNNEL
-        //- stop tunnel
-        stop_mastiff();
-#endif*/
-
 }
 //#endif	// RTCONFIG_WEBDAV
 
@@ -4273,6 +4244,7 @@ void stop_all_webdav(void)
 //#ifdef RTCONFIG_CLOUDSYNC
 void start_cloudsync(int fromUI)
 {
+#ifdef RTCONFIG_CLOUDSYNC
 	char word[PATH_MAX], *next_word;
 	char *b, *nvp, *nv;
 	int type = 0, enable = 0;
@@ -4485,10 +4457,12 @@ _dprintf("start_cloudsync: No token file.\n");
 		}
 		free(nv);
 	}
+#endif
 }
 
 void stop_cloudsync(int type)
 {
+#ifdef RTCONFIG_CLOUDSYNC
 	char buf[32];
 
 	memset(buf, 0, 32);
@@ -4595,6 +4569,7 @@ void stop_cloudsync(int type)
 
 		logmessage("Cloudsync client and Webdav_client and dropbox_client ftp_client sambaclient usb_client google_client", "daemon is stopped");
 	}
+#endif
 }
 //#endif
 
@@ -4644,9 +4619,6 @@ void start_nas_services(int force)
 #ifdef RTCONFIG_WEBDAV
 		// webdav still needed if no disk is mounted
 		start_webdav();
-#else
-		if(f_exists("/opt/etc/init.d/S50aicloud"))
-			system("sh /opt/etc/init.d/S50aicloud scan");
 #endif
 #ifdef RTCONFIG_SAMBASRV
 		if (nvram_get_int("smbd_master") || nvram_get_int("smbd_wins")) {
@@ -4758,9 +4730,6 @@ void restart_sambaftp(int stop, int start)
 #endif
 #ifdef RTCONFIG_WEBDAV
 		stop_webdav();
-#else
-		if(f_exists("/opt/etc/init.d/S50aicloud"))
-			system("sh /opt/etc/init.d/S50aicloud scan");
 #endif
 	}
 
@@ -4777,9 +4746,6 @@ void restart_sambaftp(int stop, int start)
 #endif
 #ifdef RTCONFIG_WEBDAV
 		start_webdav();
-#else
-		if(f_exists("/opt/etc/init.d/S50aicloud"))
-			system("sh /opt/etc/init.d/S50aicloud scan");
 #endif
 	}
 	file_unlock(fd);

@@ -313,6 +313,10 @@ endif
 endif
 endif
 
+ifneq ($(RTCONFIG_WEBDAV),y)
+	rm -f $(INSTALLDIR)/www/Advanced_AiDisk_webdav.asp
+endif
+
 ifneq ($(RTCONFIG_IPV6),y)
 	rm -rf $(INSTALLDIR)/www/Main_IPV6Status_Content.asp
 	rm -rf $(INSTALLDIR)/www/Advanced_IPv6_Content.asp
