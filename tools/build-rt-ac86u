@@ -14,8 +14,8 @@ docker run --rm --platform linux/amd64 --user root \
   "$image" bash -lc '
     set -euo pipefail
     if [ ! -d /build/source/.git ]; then
-      git init /build/source
-      git -C /build/source remote add origin https://github.com/bl4ko/asuswrt-merlin-ac86u.git
+      git clone --depth 1 --filter=blob:none --no-checkout --branch rt-ac86u \
+        https://github.com/bl4ko/asuswrt-merlin-ac86u.git /build/source
     fi
     cd /build/source
     git fetch --depth 1 --filter=blob:none origin "$SOURCE_REVISION"
