@@ -141,6 +141,9 @@ OBJS += base64.o
 OBJS += nvparse.o
 OBJS += bwdpi_utils.o
 OBJS += bwdpi_utils.o
+ifeq ($(BUILD_NAME),RT-AC86U)
+OBJS += disabled_services.o
+endif
 OBJS += mac_name_tbl.o
 OBJS += stun.o
 OBJS += scripts.o

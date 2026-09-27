@@ -47,7 +47,7 @@ with tempfile.TemporaryDirectory() as directory:
 print("Cloud removal checks passed")
 
 with tempfile.TemporaryDirectory() as directory:
-    source = (router / "rc/bwdpi_disabled.c").read_text() + r'''
+    source = (router / "shared/disabled_services.c").read_text() + r'''
 #include <assert.h>
 int main(void) {
     void *mesh = (void *)1;
@@ -59,6 +59,10 @@ int main(void) {
     assert(get_fw_user_list(&users, &user_len) == -1 && !users && !user_len);
     assert(get_fw_mesh_extender(NULL, NULL) == -1 && get_fw_user_list(NULL, NULL) == -1);
     assert(mesh_set_extender(NULL, 0) == -1);
+    assert(check_tcode_blacklist() == 1 && dump_dpi_support(0) == 0);
+    char out[] = "unchanged";
+    assert(aae_sendIpcMsgAndWaitResp(NULL, NULL, 0, out, sizeof(out), 0) == -1 && !out[0]);
+    assert(aae_sendIpcMsgAndWaitResp(NULL, NULL, 0, NULL, 0, 0) == -1);
 }
 '''
     binary = str(Path(directory) / "check")
