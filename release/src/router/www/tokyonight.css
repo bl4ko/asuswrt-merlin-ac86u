@@ -11,6 +11,7 @@ body, body.wrapper, .content, .NM_table, .statusbody {
   color: var(--tn-text) !important;
 }
 .banner1, .menu, .menu_blocked, .menu_QIS_title, .menu_Split,
+.titlebtn, .titledropdownbtn, .tab, .tab_NW, .tab_item,
 .FormTitle, .FormTable, .FormTable th, .FormTable td,
 .FormTable_table, .FormTable_table th, .FormTable_table td,
 .statusTitle, .table1px, .table1px th, .table1px td,
@@ -23,7 +24,7 @@ body, body.wrapper, .content, .NM_table, .statusbody {
   text-shadow: none !important;
 }
 .menu:hover, .menu_clicked, .menu_QIS_title:hover,
-.tab-click, .tab-block:hover {
+.tab-click, .tab-block:hover, .tabClicked, .tab_item_click {
   background: #414868 !important;
   color: #c0caf5 !important;
   border-color: var(--tn-blue) !important;
@@ -45,6 +46,9 @@ input[type=button], input[type=submit] {
 }
 a, .hyperlink, .faq-link { color: var(--tn-blue) !important; }
 a:hover { color: #7dcfff !important; }
+.menu a, .menu_clicked a { color: var(--tn-text) !important; }
+.titledropdownbtn::after { content: " ▾"; }
+.table-content, .table-content-first { border-color: var(--tn-border) !important; }
 :focus-visible { outline: 2px solid #7dcfff !important; outline-offset: 2px; }
 .division-block { border-left-color: #bb9af7 !important; }
 .bar-container, .svg-block { background: var(--tn-bg) !important; }
