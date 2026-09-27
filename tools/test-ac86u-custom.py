@@ -7,8 +7,9 @@ import tempfile
 root = Path(__file__).resolve().parents[1]
 router = root / "release/src/router"
 target = (root / "release/src-rt/target.mak").read_text().split("export RT-AC86U +=", 1)[1].split("export GT-AC2900", 1)[0]
-for flag in ("WEBDAV", "SMARTSYNCBASE", "NATNL_AICLOUD", "NATNL_AIHOME", "BWDPI", "WTFAST", "PARENTAL2", "GETREALIP", "ASUSCTRL", "UUPLUGIN", "ASD", "LETSENCRYPT", "INSTANT_GUARD", "OOKLA"):
+for flag in ("WEBDAV", "SMARTSYNCBASE", "NATNL_AICLOUD", "NATNL_AIHOME", "BWDPI", "WTFAST", "PARENTAL2", "GETREALIP", "UUPLUGIN", "ASD", "LETSENCRYPT", "INSTANT_GUARD", "OOKLA"):
     assert f"{flag}=n" in target
+assert "ASUSCTRL=y" in target
 
 for name in ("rc/usb.c", "rc/services.c", "rc/firewall.c", "httpd/web.c", "httpd/httpd.c"):
     source = (router / name).read_text()

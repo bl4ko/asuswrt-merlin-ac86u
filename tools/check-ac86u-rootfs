@@ -3,7 +3,7 @@ set -euo pipefail
 source_root=${1:?Pass the firmware source directory}
 firmware="$source_root/release/src-rt-5.02hnd/targets/94908HND/fs.install"
 config="$source_root/release/src/router/.config"
-for feature in WEBDAV CLOUDSYNC TUNNEL AICLOUD_TUNNEL AIHOME_TUNNEL BWDPI WTFAST GETREALIP ASD ASUSCTRL UUPLUGIN LETSENCRYPT INSTANT_GUARD; do
+for feature in WEBDAV CLOUDSYNC TUNNEL AICLOUD_TUNNEL AIHOME_TUNNEL BWDPI WTFAST GETREALIP ASD UUPLUGIN LETSENCRYPT INSTANT_GUARD; do
   if grep -qx "RTCONFIG_${feature}=y" "$config"; then
     echo "Unexpected enabled feature: $feature" >&2
     exit 1
