@@ -4,7 +4,7 @@ Personal fork of [Asuswrt-Merlin](https://github.com/RMerl/asuswrt-merlin.ng), b
 
 The `rt-ac86u` branch replaces the Merlin banner with **Powered by bl4ko**, applies a Tokyo Night theme, and removes AiCloud, Smart Sync, WebDAV and the shared ASUS remote-access tunnel. It also disables ASUS cloud security and gaming add-ons, public-IP detection, online speed tests, Let’s Encrypt and Instant Guard. Upstream source attribution and licenses are retained.
 
-The router itself is restricted to its configured IPv4 LAN subnet, loopback, local multicast and DHCP broadcasts. IPv6 traffic from the router is limited to loopback, link-local addresses and link-local multicast. These outbound rules load before LAN startup, refresh on DHCP changes and survive normal firewall reloads. They leave bridged Wi-Fi clients’ internet traffic available. Use a DNS or time server in the same LAN subnet; internet firmware checks and package downloads cannot work.
+The router itself is restricted to its configured IPv4 LAN subnet, Smartno's `10.0.1.0/24` management subnet, loopback, local multicast and DHCP broadcasts. IPv6 traffic from the router is limited to loopback, link-local addresses and link-local multicast. These outbound rules load before LAN startup, refresh on DHCP changes and survive normal firewall reloads. They leave bridged Wi-Fi clients’ internet traffic available. Use a DNS or time server in one of the allowed LAN subnets; internet firmware checks and package downloads cannot work.
 
 This does not enable UniFi adoption or add security fixes beyond upstream 386.14_2. The firmware is being validated locally and has not been tested on hardware.
 
