@@ -18,21 +18,24 @@ docker run --rm --platform linux/amd64 --user root \
   --mount "type=bind,source=$output,destination=/artifacts" \
   "$image" bash -lc '
     set -euo pipefail
+    if test -d /build/source/.git && test "$(stat -c %U /build/source/.git)" != docker; then
+      chown -R docker:docker /build/source
+    fi
+    install -d -o docker -g docker /build/source
     mkdir -p /build/source/.git
     rsync -a /project/.git/ /build/source/.git/
+    chown -R docker:docker /build/source/.git
     cd /build/source
-    git config --global --add safe.directory /build/source
-    git config extensions.worktreeConfig false
-    git config core.ignorecase false
-    git reset --hard "$SOURCE_REVISION"
-    git clean -ffdqx
-    git sparse-checkout init --cone
-    git sparse-checkout set tools release/src release/src-rt release/src-rt-5.02hnd
-    git checkout --detach "$SOURCE_REVISION"
+    gosu docker git config extensions.worktreeConfig false
+    gosu docker git config core.ignorecase false
+    gosu docker git reset --hard "$SOURCE_REVISION"
+    gosu docker git clean -ffdqx
+    gosu docker git sparse-checkout init --cone
+    gosu docker git sparse-checkout set tools release/src release/src-rt release/src-rt-5.02hnd
+    gosu docker git checkout --detach "$SOURCE_REVISION"
     set +u
     source /home/docker/envs/bcm-hnd.sh
     set -u
-    chown -R docker:docker /build/source
     gosu docker make -C release/src-rt-5.02hnd rt-ac86u PARALLEL_BUILD="-j$BUILD_JOBS" BRCM_MAX_JOBS="$BUILD_JOBS"
     if test -x tools/check-ac86u-rootfs; then
       bash tools/check-ac86u-rootfs /build/source
@@ -40,7 +43,7 @@ docker run --rm --platform linux/amd64 --user root \
     images=(release/src-rt-5.02hnd/image/RT-AC86U_*_ubi.w)
     test -f "${images[0]}"
     cp "${images[@]}" /artifacts/
-    git rev-parse HEAD > /artifacts/source-commit.txt
+    printf "%s\n" "$SOURCE_REVISION" > /artifacts/source-commit.txt
     cd /artifacts
     sha256sum RT-AC86U_*_ubi.w > SHA256SUMS
     chown "$OUTPUT_UID:$OUTPUT_GID" RT-AC86U_*_ubi.w source-commit.txt SHA256SUMS

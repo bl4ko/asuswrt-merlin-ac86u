@@ -18,6 +18,10 @@ with tempfile.TemporaryDirectory() as directory:
     assert "BUILD_JOBS=12" in arguments
     assert f"OUTPUT_UID={os.getuid()}" in arguments
     assert "gosu docker make -C release/src-rt-5.02hnd rt-ac86u" in "\n".join(arguments)
+    assert "gosu docker git checkout --detach" in "\n".join(arguments)
+    assert "rsync -a /project/.git/ /build/source/.git/" in "\n".join(arguments)
+    assert "chown -R docker:docker /build/source/.git" in "\n".join(arguments)
+    assert "chown -R docker:docker /build/source\n    fi" in "\n".join(arguments)
     assert f"type=volume,source=asuswrt-ac86u-{revision},destination=/build" in arguments
     assert f"type=bind,source={root},destination=/project,readonly" in arguments
     assert "gnuton/asuswrt-merlin-toolchains-docker@sha256:8c9681987352d6eb8a38708126c9c39edd8dd28a7bf6c0cedc0e9534387f9ab3" in arguments
