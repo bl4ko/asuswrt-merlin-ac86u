@@ -11,6 +11,7 @@ for flag in ("WEBDAV", "SMARTSYNCBASE", "NATNL_AICLOUD", "NATNL_AIHOME", "BWDPI"
     assert f"{flag}=n" in target
 assert "ASUSCTRL=y" in target
 assert "CONFIG_IP6_NF_RAW=y" in (root / "release/src-rt-5.02hnd/kernel/linux-4.1/config_base.6a").read_text()
+assert "menu_AiCloud" not in (router / "www/require/menuTrees/menuTree_no_bwdpi.js").read_text()
 
 for name in ("rc/usb.c", "rc/services.c", "rc/firewall.c", "httpd/web.c", "httpd/httpd.c"):
     source = (router / name).read_text()
