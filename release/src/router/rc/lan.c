@@ -1279,16 +1279,20 @@ int restrict_router_egress(void)
 	}
 	eval("iptables", "-t", "raw", "-A", "BL4KO_LAN", "-d", "224.0.0.0/24", "-j", "ACCEPT");
 	eval("iptables", "-t", "raw", "-A", "BL4KO_LAN", "-d", "255.255.255.255", "-p", "udp", "--sport", "68", "--dport", "67", "-j", "ACCEPT");
-	if (eval("iptables", "-t", "raw", "-C", "OUTPUT", "-j", "BL4KO_LAN"))
-		eval("iptables", "-t", "raw", "-I", "OUTPUT", "1", "-j", "BL4KO_LAN");
+	eval("iptables", "-t", "raw", "-A", "BL4KO_LAN", "-j", "DROP");
+	if (!eval("iptables", "-t", "raw", "-C", "OUTPUT", "-j", "BL4KO_LAN"))
+		eval("iptables", "-t", "raw", "-D", "OUTPUT", "-j", "BL4KO_LAN");
+	eval("iptables", "-t", "raw", "-I", "OUTPUT", "1", "-j", "BL4KO_LAN");
 
 	eval("ip6tables", "-t", "raw", "-N", "BL4KO_LAN");
 	eval("ip6tables", "-t", "raw", "-F", "BL4KO_LAN");
 	eval("ip6tables", "-t", "raw", "-A", "BL4KO_LAN", "-o", "lo", "-j", "ACCEPT");
 	eval("ip6tables", "-t", "raw", "-A", "BL4KO_LAN", "-d", "fe80::/10", "-j", "ACCEPT");
 	eval("ip6tables", "-t", "raw", "-A", "BL4KO_LAN", "-d", "ff02::/16", "-j", "ACCEPT");
-	if (eval("ip6tables", "-t", "raw", "-C", "OUTPUT", "-j", "BL4KO_LAN"))
-		eval("ip6tables", "-t", "raw", "-I", "OUTPUT", "1", "-j", "BL4KO_LAN");
+	eval("ip6tables", "-t", "raw", "-A", "BL4KO_LAN", "-j", "DROP");
+	if (!eval("ip6tables", "-t", "raw", "-C", "OUTPUT", "-j", "BL4KO_LAN"))
+		eval("ip6tables", "-t", "raw", "-D", "OUTPUT", "-j", "BL4KO_LAN");
+	eval("ip6tables", "-t", "raw", "-I", "OUTPUT", "1", "-j", "BL4KO_LAN");
 
 	return 0;
 }

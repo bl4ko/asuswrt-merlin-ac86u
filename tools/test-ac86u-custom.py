@@ -99,7 +99,7 @@ static int record(const char *first, ...) {
     }
     va_end(arguments);
     puts("");
-    return check || (policy && getenv("FAIL_POLICY"));
+    return (check && !getenv("RULE_EXISTS")) || (policy && getenv("FAIL_POLICY"));
 }
 #define eval(...) record(__VA_ARGS__, (char *)NULL)
 '''
@@ -115,6 +115,15 @@ with tempfile.TemporaryDirectory() as directory:
     assert "-d 10.0.2.113/255.255.255.0 -j ACCEPT" in commands
     assert "-d fe80::/10 -j ACCEPT" in commands and "-d ff02::/16 -j ACCEPT" in commands
     assert "FORWARD" not in commands and "PREROUTING" not in commands
+    for tool in ("iptables", "ip6tables"):
+        drop = f"{tool} -t raw -A BL4KO_LAN -j DROP"
+        jump = f"{tool} -t raw -I OUTPUT 1 -j BL4KO_LAN"
+        assert drop in commands and jump in commands and commands.index(drop) < commands.index(jump)
+    existing = subprocess.check_output([str(program), "10.0.2.113", "255.255.255.0"], env=dict(os.environ, RULE_EXISTS="1"), text=True)
+    for tool in ("iptables", "ip6tables"):
+        removal = f"{tool} -t raw -D OUTPUT -j BL4KO_LAN"
+        jump = f"{tool} -t raw -I OUTPUT 1 -j BL4KO_LAN"
+        assert removal in existing and existing.index(removal) < existing.index(jump)
     for address, mask in (("10.0.2.113", "0.0.0.0"), ("10.0.2.113", "255.0.255.0"), ("bad", "255.255.255.0")):
         output = subprocess.check_output([str(program), address, mask], text=True)
         assert f"-d {address}/{mask}" not in output
