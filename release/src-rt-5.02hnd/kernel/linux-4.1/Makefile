@@ -419,6 +419,7 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -std=gnu89
 
 include ../../.config
+../../.config: ; @test -f $@
 MODEL = $(subst -,,$(BUILD_NAME))
 KBUILD_CFLAGS += -D$(MODEL)
 #KBUILD_CFLAGS += -DCATHY_TRACE
