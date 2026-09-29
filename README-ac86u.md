@@ -6,7 +6,7 @@ The `rt-ac86u` branch replaces the Merlin banner with **Powered by bl4ko**, appl
 
 The router itself is restricted to its configured IPv4 LAN subnet, Smartno's `10.0.1.0/24` and Bezigrad's `10.1.1.0/24` management subnets, loopback, local multicast and DHCP broadcasts. IPv6 traffic from the router is limited to loopback, link-local addresses and link-local multicast. These outbound rules load before LAN startup, refresh on DHCP changes and survive normal firewall reloads. They leave bridged Wi-Fi clients’ internet traffic available. Use a DNS or time server in one of the allowed LAN subnets; internet firmware checks and package downloads cannot work.
 
-This does not enable UniFi adoption. The local egress policy is hardened, but this fork remains based on Merlin 386.14_2 and does not include the later security fixes in [ASUS stock RT-AC86U firmware](https://www.asus.com/ea/supportonly/rt-ac86u/helpdesk_bios?model2Name=RT-AC86U). The latest source revision has not been tested on hardware.
+This does not enable UniFi adoption. The local egress policy is hardened, but this fork remains based on Merlin 386.14_2 and does not include the later security fixes in [ASUS stock RT-AC86U firmware](https://www.asus.com/ea/supportonly/rt-ac86u/helpdesk_bios?model2Name=RT-AC86U).
 
 ## Build
 
