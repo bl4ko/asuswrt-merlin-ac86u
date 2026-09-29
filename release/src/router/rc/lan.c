@@ -1269,6 +1269,7 @@ int restrict_router_egress(void)
 	eval("iptables", "-t", "raw", "-F", "BL4KO_LAN");
 	eval("iptables", "-t", "raw", "-A", "BL4KO_LAN", "-o", "lo", "-j", "ACCEPT");
 	eval("iptables", "-t", "raw", "-A", "BL4KO_LAN", "-d", "10.0.1.0/24", "-j", "ACCEPT");
+	eval("iptables", "-t", "raw", "-A", "BL4KO_LAN", "-d", "10.1.1.0/24", "-j", "ACCEPT");
 	if (inet_pton(AF_INET, nvram_safe_get("lan_ipaddr"), &address) == 1 &&
 	    inet_pton(AF_INET, nvram_safe_get("lan_netmask"), &mask) == 1 && mask.s_addr) {
 		inverse = ~ntohl(mask.s_addr) & 0xffffffffUL;

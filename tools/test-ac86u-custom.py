@@ -112,6 +112,7 @@ with tempfile.TemporaryDirectory() as directory:
     assert "iptables -t raw -P OUTPUT DROP" in commands
     assert "ip6tables -t raw -P OUTPUT DROP" in commands
     assert "-d 10.0.1.0/24 -j ACCEPT" in commands
+    assert "-d 10.1.1.0/24 -j ACCEPT" in commands
     assert "-d 10.0.2.113/255.255.255.0 -j ACCEPT" in commands
     assert "-d fe80::/10 -j ACCEPT" in commands and "-d ff02::/16 -j ACCEPT" in commands
     assert "FORWARD" not in commands and "PREROUTING" not in commands
