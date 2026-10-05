@@ -8,6 +8,12 @@ The router itself is restricted to its configured IPv4 LAN subnet, Smartno's `10
 
 This does not enable UniFi adoption. The local egress policy is hardened, but this fork remains based on Merlin 386.14_2 and does not include the later security fixes in [ASUS stock RT-AC86U firmware](https://www.asus.com/ea/supportonly/rt-ac86u/helpdesk_bios?model2Name=RT-AC86U).
 
+## Experimental repeater PSTA
+
+The optional `bl4ko_psta=1` setting applies the tested runtime sequence before the normal connection monitor starts: radio down, WET disabled, PSTA enabled, radio up, and an explicit WPA2-PSK join. It applies only to the RT-AC86U with a 5 GHz repeater uplink and WPA2/AES. The normal broadcast configuration and connection monitor remain in use. The setting is disabled by default. A command failure requests restoration of WET and starts the normal monitor.
+
+The runtime sequence retained the parent connection, both broadcast interfaces, and gateway connectivity in bounded tests. No downstream Wi-Fi client was present. Client forwarding, upstream MAC preservation, roaming, startup behavior, and firmware operation remain unverified. This is a test candidate, not a confirmed fix for UniFi IP-conflict alerts. Do not enable it for normal use until those checks pass. Disabling the setting and restarting wireless requests the original WET configuration.
+
 ## Build
 
 Install and start Docker, then run from this repository:
@@ -33,6 +39,7 @@ This is a repeatable source/toolchain setup, not a guarantee of byte-identical f
 ```sh
 python3 tools/test-build-rt-ac86u.py
 python3 tools/test-ac86u-custom.py
+python3 tools/test-repeater-psta.py
 ```
 
 Build procedure: [upstream documentation](https://github.com/RMerl/asuswrt-merlin.ng/wiki/Compile-Firmware-from-source).

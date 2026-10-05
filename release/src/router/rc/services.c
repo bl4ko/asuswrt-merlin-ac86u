@@ -46,6 +46,9 @@
 #include <pwd.h>
 #endif
 #include <shared.h>
+#ifdef RTAC86U
+#include <wlutils.h>
+#endif
 #include "flash_mtd.h"
 
 #if defined(RTCONFIG_CAPTIVE_PORTAL)
@@ -12077,6 +12080,47 @@ stop_psta_monitor()
 	return 0;
 }
 
+#ifdef RTAC86U
+static void configure_repeater_psta(void)
+{
+	char *ifname;
+	char *ssid;
+	int psta, wet;
+
+	if (!nvram_match("bl4ko_psta", "1") || !is_psr(1) ||
+	    !nvram_match("wl1_mode", "wet") ||
+	    !nvram_match("wlc_auth_mode", "psk2") ||
+	    !nvram_match("wlc_crypto", "aes"))
+		return;
+
+	ifname = nvram_safe_get("wl1_ifname");
+	ssid = nvram_safe_get("wlc_ssid");
+	if (!*ifname || !*ssid ||
+	    wl_iovar_getint(ifname, "psta", &psta) ||
+	    wl_iovar_getint(ifname, "wet_enab", &wet))
+		return;
+	if (psta == 1 && wet == 0)
+		return;
+	if (psta != 0 || wet != 1)
+		return;
+
+	if (eval("wl", "-i", ifname, "down") ||
+	    eval("wl", "-i", ifname, "wet_enab", "0") ||
+	    eval("wl", "-i", ifname, "psta", "1") ||
+	    eval("wl", "-i", ifname, "up") ||
+	    eval("wl", "-i", ifname, "join", ssid, "imode", "bss", "amode", "wpa2psk")) {
+		eval("wl", "-i", ifname, "down");
+		eval("wl", "-i", ifname, "psta", "0");
+		eval("wl", "-i", ifname, "wet_enab", "1");
+		eval("wl", "-i", ifname, "up");
+		eval("wl", "-i", ifname, "join", ssid, "imode", "bss", "amode", "wpa2psk");
+		logmessage("repeater", "PSTA setup failed; WET restoration requested");
+		return;
+	}
+	logmessage("repeater", "Experimental PSTA enabled; client MAC preservation requires verification");
+}
+#endif
+
 int
 start_psta_monitor()
 {
@@ -12090,6 +12134,9 @@ start_psta_monitor()
 	}
 #endif
 
+#ifdef RTAC86U
+	configure_repeater_psta();
+#endif
 	return _eval(psta_monitor_argv, NULL, 0, &pid);
 }
 #endif
