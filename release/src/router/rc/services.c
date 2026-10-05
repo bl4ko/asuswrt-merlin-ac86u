@@ -41,14 +41,15 @@
 #include <sys/stat.h>
 #include <sys/utsname.h>
 #include <sys/param.h>
+#ifdef RTAC86U
+#include <wlutils.h>
+#else
 #include <net/ethernet.h>
+#endif
 #ifdef RTCONFIG_TOR
 #include <pwd.h>
 #endif
 #include <shared.h>
-#ifdef RTAC86U
-#include <wlutils.h>
-#endif
 #include "flash_mtd.h"
 
 #if defined(RTCONFIG_CAPTIVE_PORTAL)
